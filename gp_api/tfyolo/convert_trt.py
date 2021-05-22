@@ -7,7 +7,7 @@ if len(physical_devices) > 0:
 import numpy as np
 import cv2
 from tensorflow.python.compiler.tensorrt import trt_convert as trt
-import core.utils as utils
+import gp_api.tfyolo.core.utils as utils
 from tensorflow.python.saved_model import signature_constants
 import os
 from tensorflow.compat.v1 import ConfigProto

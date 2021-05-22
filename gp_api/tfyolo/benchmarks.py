@@ -2,12 +2,12 @@ import numpy as np
 import tensorflow as tf
 import time
 import cv2
-from core.yolov4 import YOLOv4, YOLOv3_tiny, YOLOv3, decode
+from gp_api.tfyolo.core.yolov4 import YOLOv4, YOLOv3_tiny, YOLOv3, decode
 from absl import app, flags, logging
 from absl.flags import FLAGS
 from tensorflow.python.saved_model import tag_constants
 from core import utils
-from core.config import cfg
+from gp_api.tfyolo.core.config import cfg
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 

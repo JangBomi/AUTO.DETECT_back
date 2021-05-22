@@ -4,8 +4,8 @@ if len(physical_devices) > 0:
     tf.config.experimental.set_memory_growth(physical_devices[0], True)
 from absl import app, flags, logging
 from absl.flags import FLAGS
-import core.utils as utils
-from core.yolov4 import filter_boxes
+import gp_api.tfyolo.core.utils as utils
+from gp_api.tfyolo.core.yolov4 import filter_boxes
 from tensorflow.python.saved_model import tag_constants
 from PIL import Image
 import cv2
