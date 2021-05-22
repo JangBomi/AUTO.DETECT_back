@@ -65,3 +65,5 @@ absl-py
 easydict
 matplotlib
 pillow
+beepy==1.0.7
+simpleaudio==1.0.4

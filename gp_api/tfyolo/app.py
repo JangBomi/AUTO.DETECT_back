@@ -1,6 +1,8 @@
 # yolov4를 tf로 변환한 것을 사용하기 위한 것
 import time
+import beepy
 import tensorflow as tf
+from beepy import beep
 from django.http import HttpResponse, FileResponse, StreamingHttpResponse
 from django.shortcuts import render
 
@@ -15,7 +17,7 @@ from PIL import Image
 import cv2
 import numpy as np
 from django.utils import timezone
-import winsound as sd
+
 
 from ..serializers import RecordDetailSerializer
 from ..models import RecordDetail, Record
@@ -34,11 +36,6 @@ webcam = cv2.VideoCapture(0)  # webcam 사용
 # tf model load
 saved_model_loaded = tf.saved_model.load(weights, tags=[tag_constants.SERVING])
 infer = saved_model_loaded.signatures['serving_default']
-
-def beepsound():
-    fr = 2000
-    du = 1000
-    sd.Beep(fr, du)
 
 
 def gen_frames(record_id):
@@ -102,7 +99,7 @@ def gen_frames(record_id):
                         captureTime=now,
                         recordId_id=record_id
                     )
-                    beepsound()
+                    beep(sound=2)
                     record.save()
                     cv2.imwrite(file_name, result)
                 else:
