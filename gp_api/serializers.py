@@ -16,6 +16,7 @@ class CreateUserSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
+    # repassword = serializers.CharField(required=True) #비밀번호 재확인 위해
     realUserName = serializers.CharField(required=True)
     birthDate = serializers.DateField(required=True)
 
@@ -54,10 +55,13 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 'User with given email and password does not exists'
             )
-        return {
+
+        return_value = {
+            'id': user.id,
             'email': user.email,
-            'token': jwt_token
+            'token': jwt_token,
         }
+        return return_value
 
 
 class RecordSerializer(serializers.ModelSerializer):
@@ -93,11 +97,46 @@ class RecordSerializer(serializers.ModelSerializer):
         record.save()
         return record
 
-    def get_all(self):
-        queryset = Record.objects.all()
+    def get_all(self, validated_data):
+        #userId = validated_data['userId']
+        queryset = Record.objects.all().order_by('-id')
         record = RecordSerializer(queryset, many=True)
 
         return record.data
+
+
+class RecordUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Record
+        fields = (
+            'id',
+            'endTime',
+            'recordNum',
+            'etc',
+            'userId'
+        )
+
+    endTime = serializers.DateTimeField
+    recordNum = serializers.IntegerField()
+    etc = serializers.CharField(max_length=255)
+    userId = serializers.IntegerField
+
+    def updateRecord(self, validated_data, record_id):
+        count = 0
+        recordDetail = RecordDetail.objects.filter(recordId_id=record_id)
+
+        for detail in recordDetail:
+            count = count + 1
+
+        presentRecord = Record.objects.filter(id=record_id)
+
+        for record in presentRecord:
+            record.endTime = validated_data['endTime']
+            record.etc = validated_data['etc']
+            record.recordNum = count
+            record.save()
+
+        return presentRecord
 
 
 class RecordDetailSerializer(serializers.ModelSerializer):

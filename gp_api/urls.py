@@ -4,6 +4,7 @@ from django.conf.urls import url
 from .views import NoteViewSet, RegistrationAPI, UserAPI
 
 from . import views
+from .tfyolo import app
 
 
 note_list = NoteViewSet.as_view({"get": "list", "post": "create"})
@@ -18,11 +19,14 @@ urlpatterns = [
     path('<int:pk>/', views.DetailPost.as_view()),
     url("^notes/$", note_list, name="note-list"),
     url("^notes/(?P<pk>[0-9]+)/$", note_detail, name="note-detail"),
-    url("^auth/register/$", RegistrationAPI.as_view()),
-    url("^auth/user/$", UserAPI.as_view()),
+    # url("^auth/register/$", RegistrationAPI.as_view()),
+    # url("^auth/user/$", UserAPI.as_view()),
     path('signup', views.createUser),
     path('signin', views.login),
     path('home/record', views.record),
-    path('home/record/detail/<int:recordId_id>', views.recordDetail)
+    path('home/record/<int:recordId_id>', views.recordOne),
+    path('home/record/detail/<int:recordId_id>', views.recordDetail),
+    path('cam', app.index),
+    url(r'^video_feed/$', app.video_feed)
 ]
 

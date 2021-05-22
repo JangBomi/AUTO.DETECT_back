@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import generics, viewsets, permissions, status
 from rest_framework.response import Response
 from knox.models import AuthToken
@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 
-from .models import Post, Notes, User
+from .models import Post, Notes, User, Record
 from .serializers import (
     PostSerializer,
     NoteSerializer,
@@ -16,7 +16,8 @@ from .serializers import (
     UserSerializer,
     LoginSerializer,
     RecordSerializer,
-    RecordDetailSerializer
+    RecordDetailSerializer,
+    RecordUpdateSerializer
 )
 
 
@@ -59,6 +60,10 @@ def createUser(request):
 @permission_classes([AllowAny])
 def login(request):
     if request.method == 'POST':
+        #이미 로그인 했는데 다시 로그인 하면 홈으로
+        if request.user.is_authenticated:
+            return redirect('/')
+
         serializer = LoginSerializer(data=request.data)
 
         if not serializer.is_valid(raise_exception=True):
@@ -66,9 +71,12 @@ def login(request):
         if serializer.validated_data['email'] == "None":
             return Response({'message': 'fail'}, status=status.HTTP_200_OK)
 
+        data = serializer.validate(request.data)
+
         response = {
             'success': 'True',
-            'token': serializer.data['token']
+            'token': serializer.data['token'],
+            'id': data['id']
         }
         return Response(response, status=status.HTTP_200_OK)
 
@@ -76,17 +84,19 @@ def login(request):
 # data=request.query_param
 
 
-@api_view(['POST', 'GET'])
+@api_view(['POST', 'GET', 'PATCH'])
 @permission_classes((IsAuthenticated, ))
 @authentication_classes((JSONWebTokenAuthentication,))
 def record(request):
     if request.method == 'GET':
         serializer = RecordSerializer()
 
+        data = serializer.get_all(request.data)
+
         response = {
             'success': True,
             'message': "successfully get record",
-            'data': serializer.get_all()
+            'data': data
         }
 
         return Response(response, status=status.HTTP_200_OK)
@@ -97,7 +107,31 @@ def record(request):
         if not serializer.is_valid(raise_exception=True):
             return Response({"success": False, "message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
 
-        serializer.save()
+        obj = serializer.save()
+
+        id = obj.id
+
+        response = {
+            'success': True,
+            'message': "successfully save record",
+            'record_id': id
+        }
+
+        return Response(response, status=status.HTTP_201_CREATED)
+
+@api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
+@authentication_classes((JSONWebTokenAuthentication, ))
+def recordOne(request, recordId_id):
+    if request.method == 'PATCH':
+        recordId_id = request.data['id']
+
+        serializer = RecordUpdateSerializer(data = request.data)
+
+        if not serializer.is_valid():
+            print(serializer.errors)
+
+        serializer.updateRecord(request.data, recordId_id)
 
         response = {
             'success': True,
