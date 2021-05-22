@@ -81,10 +81,10 @@ WSGI_APPLICATION = 'gp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gp-database',
+        'NAME': 'gpdatabase',
         'USER': 'gp',
         'PASSWORD': '1234qwer',
-        'HOST': 'gp-database.cfgbs9nzcfco.ap-northeast-2.rds.amazonaws.com',
+        'HOST': 'gpdatabase.cfgbs9nzcfco.ap-northeast-2.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
