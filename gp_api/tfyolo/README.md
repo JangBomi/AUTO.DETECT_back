@@ -18,15 +18,15 @@ Download yolov4.weights file: https://drive.google.com/open?id=1cewMfusmPjYWbrnu
 ```bash
 # Convert darknet weights to tensorflow
 ## yolov4
-python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolov4-416 --input_size 416 --model yolov4 
+python save_model.py --weights ./data/yolov4.weights --output gp_api/tfyolo/checkpoints/yolov4-416 --input_size 416 --model yolov4 
 
 ## yolov4-tiny
-python save_model.py --weights ./data/yolov4-tiny.weights --output ./checkpoints/yolov4-tiny-416 --input_size 416 --model yolov4 --tiny
+python save_model.py --weights ./data/yolov4-tiny.weights --output gp_api/tfyolo/checkpoints/yolov4-tiny-416 --input_size 416 --model yolov4 --tiny
 
 # Run demo tensorflow
-python detect.py --weights ./checkpoints/yolov4-416 --size 416 --model yolov4 --image ./data/kite.jpg
+python detect.py --weights gp_api/tfyolo/checkpoints/yolov4-416 --size 416 --model yolov4 --image ./data/kite.jpg
 
-python detect.py --weights ./checkpoints/yolov4-tiny-416 --size 416 --model yolov4 --image ./data/kite.jpg --tiny
+python detect.py --weights gp_api/tfyolo/checkpoints/yolov4-tiny-416 --size 416 --model yolov4 --image ./data/kite.jpg --tiny
 
 ```
 If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` in command
@@ -43,16 +43,16 @@ If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` in command
 
 ```bash
 # Save tf model for tflite converting
-python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolov4-416 --input_size 416 --model yolov4 --framework tflite
+python save_model.py --weights gp_api/tfyolo/data/yolov4.weights --output gp_api/tfyolo/checkpoints/yolov4-416 --input_size 416 --model yolov4 --framework tflite
 
 # yolov4
-python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416.tflite
+python convert_tflite.py --weights gp_api/tfyolo/checkpoints/yolov4-416 --output gp_api/tfyolo/checkpoints/yolov4-416.tflite
 
 # yolov4 quantize float16
-python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416-fp16.tflite --quantize_mode float16
+python convert_tflite.py --weights gp_api/tfyolo/checkpoints/yolov4-416 --output gp_api/tfyolo/checkpoints/yolov4-416-fp16.tflite --quantize_mode float16
 
 # yolov4 quantize int8
-python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416-int8.tflite --quantize_mode int8 --dataset ./coco_dataset/coco/val207.txt
+python convert_tflite.py --weights gp_api/tfyolo/checkpoints/yolov4-416 --output ./checkpoints/yolov4-416-int8.tflite --quantize_mode int8 --dataset ./coco_dataset/coco/val207.txt
 
 # Run demo tflite model
 python detect.py --weights ./checkpoints/yolov4-416.tflite --size 416 --model yolov4 --image ./data/kite.jpg --framework tflite
