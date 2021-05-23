@@ -10,7 +10,7 @@ from tensorflow.python.saved_model import tag_constants
 import gp_api.tfyolo.core.utils as utils
 from gp_api.tfyolo.core.config import cfg
 
-flags.DEFINE_string('weights', 'gp_api/tfyolo/checkpoints/yolov4-416',
+flags.DEFINE_string('weights', './checkpoints/yolov4-416',
                     'path to weights file')
 flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite, trt)'
                     'path to weights file')
