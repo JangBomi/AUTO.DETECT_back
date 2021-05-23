@@ -23,7 +23,7 @@ from ..serializers import RecordDetailSerializer
 from ..models import RecordDetail, Record
 
 framework = 'tf'  # 'tflite' # tf, tflite, trt
-weights = 'gp_api/tfyolo/checkpoints/yolov4-416'  # 변환한 모델이 저장된 경로 적기
+weights = 'gp_api/tfyolo/checkpoints/yolov4-416/variables/variables.data'  # 변환한 모델이 저장된 경로 적기
 size = 416  # resize images to
 tiny = False  # yolo-tiny인 경우 True 아니라면 False
 model = 'yolov4'  # yolov3 or yolov4
