@@ -58,11 +58,8 @@ Werkzeug==1.0.1
 wrapt==1.12.1
 zipp==3.4.1
 opencv-python==4.1.1.26
-lxml
-tqdm
 tensorflow==2.3.0rc0
 absl-py
-easydict
 matplotlib
 pillow
 beepy==1.0.7
