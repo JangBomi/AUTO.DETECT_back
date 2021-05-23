@@ -31,7 +31,8 @@ iou = 0.45  # iou threshold
 score = 0.25  # score threshold
 
 input_size = 416
-webcam = cv2.VideoCapture(-1)  # webcam 사용
+webcam = cv2.VideoCapture(0)  # webcam 사용
+cam2 = cv2.VideoCapture(0)
 
 # tf model load
 saved_model_loaded = tf.saved_model.load(weights, tags=[tag_constants.SERVING])
