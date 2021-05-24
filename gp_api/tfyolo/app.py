@@ -1,7 +1,6 @@
 # yolov4를 tf로 변환한 것을 사용하기 위한 것
 import time
 import beepy
-import boto3
 import tensorflow as tf
 from beepy import beep
 from django.http import HttpResponse, FileResponse, StreamingHttpResponse
@@ -16,6 +15,7 @@ from gp_api.tfyolo.core.yolov4 import filter_boxes
 from tensorflow.python.saved_model import tag_constants
 from PIL import Image
 import cv2
+import base64
 import numpy as np
 from django.utils import timezone
 
@@ -32,42 +32,129 @@ iou = 0.45  # iou threshold
 score = 0.25  # score threshold
 
 input_size = 416
-webcam = cv2.VideoCapture(0)  # webcam 사용
+## webcam = cv2.VideoCapture(0)  # webcam 사용
 
 # tf model load
 saved_model_loaded = tf.saved_model.load(weights, tags=[tag_constants.SERVING])
 infer = saved_model_loaded.signatures['serving_default']
 
 
-def gen_frames(record_id):
-    print("hello")
+# def gen_frames(record_id):
+#     try:
+#         frame_id = 0
+#         print(record_id)
+#
+#         # record_id = Record.objects.raw("SELECT max(id) FROM gp_api_record")
+#         #record_id = 1
+#
+#
+#         while True:
+#             return_value, frame = webcam.read()
+#             if return_value:
+#                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#                 image = Image.fromarray(frame)
+#             else:
+#                 if frame_id == webcam.get(cv2.CAP_PROP_FRAME_COUNT):
+#                     print("Video processing complete")
+#                     exit()
+#                     break
+#                 raise ValueError("No image! Try with another video format")
+#
+#             frame_size = frame.shape[:2]
+#             image_data = cv2.resize(frame, (input_size, input_size))
+#             image_data = image_data / 255.
+#             image_data = image_data[np.newaxis, ...].astype(np.float32)
+#
+#             batch_data = tf.constant(image_data)
+#             pred_bbox = infer(batch_data)
+#             for key, value in pred_bbox.items():
+#                 boxes = value[:, :, 0:4]
+#                 pred_conf = value[:, :, 4:]
+#
+#             boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
+#             boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
+#                 scores=tf.reshape(
+#                     pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
+#                 max_output_size_per_class=50,
+#                 max_total_size=50,
+#                 iou_threshold=iou,
+#                 score_threshold=score
+#             )
+#             pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
+#             image = utils.draw_bbox(frame, pred_bbox)
+#             result = np.asarray(image)
+#
+#             # 각 물체가 몇%의 확률로 해당 물체라고 판별했는지 해당 물체를 판별한 시각을 출력
+#             object_num = -1
+#             flag = 0
+#             for i in scores.numpy()[0]:
+#                 object_num += 1
+#                 now = timezone.now()
+#                 now_time = time.strftime('%Y' + '-' + '%m' + '-' + '%d' + 'T' + '%H' + '-' + '%M' + '-' + '%S')
+#                 if (i != 0):
+#                     print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
+#                     file_name = "C:/Users/user/Desktop/capture/" + now_time + ".png"
+#                     record = RecordDetail.objects.create(
+#                         detectedItem="일회용 컵",
+#                         image=file_name,
+#                         captureTime=now,
+#                         recordId_id=record_id
+#                     )
+#                     beep(sound=2)
+#                     record.save()
+#                     cv2.imwrite(file_name, result)
+#                 else:
+#                     if (object_num == 0):
+#                         flag = 1
+#                     break
+#
+#             result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+#
+#             # 이미지 저장
+#             # if (flag == 0):
+#             # cv2.imwrite("C:/Users/user/Desktop/capture/" + now_time + ".png", result)
+#
+#             if cv2.waitKey(1) & 0xFF == ord('q'): break
+#
+#             frame_id += 1
+#
+#             # webcam에서 찍고 있는 화면을 web상에서 보여줌.
+#             ret, buffer = cv2.imencode('.jpg', result)
+#             frame1 = buffer.tobytes()
+#             yield (b'--frame\r\n'
+#                    b'Content-Type: image/jpeg\r\n\r\n' + frame1 + b'\r\n')
+#
+#     except Exception as ex:
+#         print(ex)
+#         webcam.release()
+#         cv2.destroyAllWindows()
+#
+#     webcam.release()
+#     return webcam
+#     cv2.destroyAllWindows()
+
+
+def gen_frames(record_id, base64Frame):
     try:
         frame_id = 0
-
-
-        # record = Record.objects.latest('data_added')
-        # record_id = record.id
-
         print(record_id)
 
-        # record_id = Record.objects.raw("SELECT max(id) FROM gp_api_record")
-        #record_id = 1
-
+        decoded_data = base64.b64decode(base64Frame)
 
         while True:
-            return_value, frame = webcam.read()
-            if return_value:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                image = Image.fromarray(frame)
-            else:
-                if frame_id == webcam.get(cv2.CAP_PROP_FRAME_COUNT):
-                    print("Video processing complete")
-                    exit()
-                    break
-                raise ValueError("No image! Try with another video format")
+            #return_value, frame = webcam.read()
+            #if return_value:
+                #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                #image = Image.fromarray(frame)
+            #else:
+                #if frame_id == webcam.get(cv2.CAP_PROP_FRAME_COUNT):
+                    #print("Video processing complete")
+                    #exit()
+                    #break
+                #raise ValueError("No image! Try with another video format")
 
-            frame_size = frame.shape[:2]
-            image_data = cv2.resize(frame, (input_size, input_size))
+            #frame_size = frame.shape[:2]
+            image_data = cv2.resize(decoded_data, (input_size, input_size))
             image_data = image_data / 255.
             image_data = image_data[np.newaxis, ...].astype(np.float32)
 
@@ -87,7 +174,7 @@ def gen_frames(record_id):
                 score_threshold=score
             )
             pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
-            image = utils.draw_bbox(frame, pred_bbox)
+            image = utils.draw_bbox(base64Frame, pred_bbox)
             result = np.asarray(image)
 
             # 각 물체가 몇%의 확률로 해당 물체라고 판별했는지 해당 물체를 판별한 시각을 출력
@@ -98,25 +185,17 @@ def gen_frames(record_id):
                 now = timezone.now()
                 now_time = time.strftime('%Y' + '-' + '%m' + '-' + '%d' + 'T' + '%H' + '-' + '%M' + '-' + '%S')
                 if (i != 0):
-                    s3 = boto3.client(
-                        's3',
-                        aws_access_key_id="AKIAVSLMQQUTD56BWFXG",
-                        aws_secret_access_key="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"
-                    )
                     print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
-                    file_name = "%s.jpeg" % (now_time)
-                    key = "%s/%s.jpeg" %(record_id, now_time)
-                    print(file_name)
+                    file_name = "C:/Users/user/Desktop/capture/" + now_time + ".png"
                     record = RecordDetail.objects.create(
                         detectedItem="일회용 컵",
                         image=file_name,
                         captureTime=now,
                         recordId_id=record_id
                     )
-                    beep(sound=1)
+                    beep(sound=2)
                     record.save()
                     cv2.imwrite(file_name, result)
-                    s3.upload_file(file_name, 'gpbucket-bomi', key)
                 else:
                     if (object_num == 0):
                         flag = 1
@@ -128,7 +207,7 @@ def gen_frames(record_id):
             # if (flag == 0):
             # cv2.imwrite("C:/Users/user/Desktop/capture/" + now_time + ".png", result)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'): break
+            #if cv2.waitKey(1) & 0xFF == ord('q'): break
 
             frame_id += 1
 
@@ -140,24 +219,20 @@ def gen_frames(record_id):
 
     except Exception as ex:
         print(ex)
-        webcam.release()
-        cv2.destroyAllWindows()
+        #webcam.release()
+        #cv2.destroyAllWindows()
 
-    webcam.release()
-    return webcam
-    cv2.destroyAllWindows()
+    #webcam.release()
+    #return webcam
+    #cv2.destroyAllWindows()
 
 
 def video_feed(request):
     """Video streaming route. Put this in the src attribute of an img tag."""
-    record_id = request.GET.get('id')
-    print("hi")
-    return StreamingHttpResponse(gen_frames(record_id), content_type='multipart/x-mixed-replace; boundary=frame')
+    record_id = request.POST.get('id')
+    frame=request.POST.get('data')
+    return StreamingHttpResponse(gen_frames(record_id, frame), content_type='multipart/x-mixed-replace; boundary=frame')
 
-# def video_feed(request):
-#     """Video streaming route. Put this in the src attribute of an img tag."""
-#     print("hi")
-#     return StreamingHttpResponse(gen_frames(record_id), content_type='multipart/x-mixed-replace; boundary=frame')
 
 def index(request):
     """Video streaming home page."""
