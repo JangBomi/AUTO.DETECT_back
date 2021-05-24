@@ -1,6 +1,7 @@
 # yolov4를 tf로 변환한 것을 사용하기 위한 것
 import time
 import beepy
+import boto3
 import tensorflow as tf
 from beepy import beep
 from django.http import HttpResponse, FileResponse, StreamingHttpResponse
@@ -39,8 +40,14 @@ infer = saved_model_loaded.signatures['serving_default']
 
 
 def gen_frames(record_id):
+    print("hello")
     try:
         frame_id = 0
+
+
+        # record = Record.objects.latest('data_added')
+        # record_id = record.id
+
         print(record_id)
 
         # record_id = Record.objects.raw("SELECT max(id) FROM gp_api_record")
@@ -91,17 +98,25 @@ def gen_frames(record_id):
                 now = timezone.now()
                 now_time = time.strftime('%Y' + '-' + '%m' + '-' + '%d' + 'T' + '%H' + '-' + '%M' + '-' + '%S')
                 if (i != 0):
+                    s3 = boto3.client(
+                        's3',
+                        aws_access_key_id="AKIAVSLMQQUTD56BWFXG",
+                        aws_secret_access_key="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"
+                    )
                     print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
-                    file_name = "C:/Users/user/Desktop/capture/" + now_time + ".png"
+                    file_name = "%s.jpeg" % (now_time)
+                    key = "%s/%s.jpeg" %(record_id, now_time)
+                    print(file_name)
                     record = RecordDetail.objects.create(
                         detectedItem="일회용 컵",
                         image=file_name,
                         captureTime=now,
                         recordId_id=record_id
                     )
-                    beep(sound=2)
+                    beep(sound=1)
                     record.save()
                     cv2.imwrite(file_name, result)
+                    s3.upload_file(file_name, 'gpbucket-bomi', key)
                 else:
                     if (object_num == 0):
                         flag = 1
@@ -136,8 +151,13 @@ def gen_frames(record_id):
 def video_feed(request):
     """Video streaming route. Put this in the src attribute of an img tag."""
     record_id = request.GET.get('id')
+    print("hi")
     return StreamingHttpResponse(gen_frames(record_id), content_type='multipart/x-mixed-replace; boundary=frame')
 
+# def video_feed(request):
+#     """Video streaming route. Put this in the src attribute of an img tag."""
+#     print("hi")
+#     return StreamingHttpResponse(gen_frames(record_id), content_type='multipart/x-mixed-replace; boundary=frame')
 
 def index(request):
     """Video streaming home page."""

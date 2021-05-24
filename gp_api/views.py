@@ -119,7 +119,7 @@ def record(request):
 
         return Response(response, status=status.HTTP_201_CREATED)
 
-@api_view(['PATCH'])
+@api_view(['PATCH', 'DELETE'])
 @permission_classes((IsAuthenticated, ))
 @authentication_classes((JSONWebTokenAuthentication, ))
 def recordOne(request, recordId_id):
@@ -139,6 +139,23 @@ def recordOne(request, recordId_id):
         }
 
         return Response(response, status=status.HTTP_201_CREATED)
+
+    if request.method == 'DELETE':
+        recordId_id = request.data['id']
+
+        serializer = RecordUpdateSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            print(serializer.errors)
+
+        serializer.deleteRecord(request.data, recordId_id)
+
+        response = {
+            'success': True,
+            'message': "successfully delete record"
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
 
 
 @api_view(['POST', 'GET'])
@@ -162,8 +179,8 @@ def recordDetail(request, recordId_id):
         if not serializer.is_valid(raise_exception=True):
             return Response({"success": False, "message": "Error."}, status=status.HTTP_409_CONFLICT)
 
-        #serializer.create(validated_data=request.data)
-        serializer.save()
+        serializer.create(validated_data=request.data)
+        #serializer.save()
 
         response = {
             'success': True,

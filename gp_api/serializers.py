@@ -138,6 +138,12 @@ class RecordUpdateSerializer(serializers.ModelSerializer):
 
         return presentRecord
 
+    def deleteRecord(self, validated_data, record_id):
+
+        record = Record.objects.filter(id=record_id)
+        for r in record:
+            r.delete()
+
 
 class RecordDetailSerializer(serializers.ModelSerializer):
     class Meta:
@@ -151,14 +157,14 @@ class RecordDetailSerializer(serializers.ModelSerializer):
         )
 
     detectedItem = serializers.CharField()
-    image = serializers.CharField()
+    image = serializers.ImageField()
     captureTime = serializers.DateTimeField()
     recordId_id = serializers.IntegerField()
 
     def create(self, validated_data):
         recordDetail = RecordDetail.objects.create(
             detectedItem=validated_data['detectedItem'],
-            image=validated_data['image'],
+            image="https://gpbucket-bomi.s3.ap-northeast-2.amazonaws.com/"+validated_data['recordId_id']+"/"+validated_data['image'],
             captureTime=validated_data['captureTime'],
             recordId_id=validated_data['recordId_id']
         )

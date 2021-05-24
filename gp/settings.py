@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ SECRET_KEY = 'f_^^ww0azbgfj*2n*2gnad$809$$&_cn%^6=*h-$2ppst)3ve4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".ap-northeast-2.compute.amazonaws.com"]
+ALLOWED_HOSTS = [".ap-northeast-2.compute.amazonaws.com", "localhost"]
 
 # Application definition
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'knox',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -91,6 +93,20 @@ DATABASES = {
         },
     }
 }
+
+AWS_ACCESS_KEY_ID = 'AKIAVSLMQQUTD56BWFXG'
+AWS_SECRET_ACCESS_KEY = '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' # .csv 파일에 있는 내용을 입력 Secret access key
+AWS_REGION = 'ap-northeast-2'
+
+###S3 Storages
+AWS_STORAGE_BUCKET_NAME = 'gpbucket-bomi' # 설정한 버킷 이름
+AWS_S3_CUSTOM_DOMAIN = 'gpbucket-bomi.s3.ap-northeast-2.amazonaws.com'
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'result')
+
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',

@@ -27,6 +27,8 @@ urlpatterns = [
     path('home/record/<int:recordId_id>', views.recordOne),
     path('home/record/detail/<int:recordId_id>', views.recordDetail),
     path('cam', app.index),
+    #path('video_feed/<int:recordId_id>', app.video_feed),
+    #path('video_feed', app.video_feed)
     url(r'^video_feed/$', app.video_feed)
 ]
 
