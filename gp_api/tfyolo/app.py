@@ -150,6 +150,8 @@ def gen_frames(record_id, base64Frame):
 
         decoded_data = Image.open(BytesIO(base64.b64decode(strs)))
 
+        print(decoded_data[:500])
+
         print("0")
 
         decoded_data = np.array(decoded_data)
@@ -230,6 +232,9 @@ def gen_frames(record_id, base64Frame):
 
         # webcam에서 찍고 있는 화면을 web상에서 보여줌.
         ret, buffer = cv2.imencode('.jpeg', result)
+
+        print("ret")
+        print(ret[:100])
         print("버퍼")
         print(buffer[:500])
 
