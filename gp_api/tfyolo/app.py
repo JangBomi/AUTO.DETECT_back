@@ -26,7 +26,7 @@ from ..models import RecordDetail, Record
 
 framework = 'tf'  # 'tflite' # tf, tflite, trt
 weights = 'gp_api/tfyolo/checkpoints/yolov4-416/'  # 변환한 모델이 저장된 경로 적기
-size = 416  # resize images to
+size = 256  # resize images to
 tiny = False  # yolo-tiny인 경우 True 아니라면 False
 model = 'yolov4'  # yolov3 or yolov4
 iou = 0.45  # iou threshold
