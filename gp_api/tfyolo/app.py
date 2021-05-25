@@ -139,7 +139,7 @@ def gen_frames(record_id, base64Frame):
     try:
         frame_id = 0
 
-        print(base64Frame[:500])
+        #print(base64Frame[:500])
 
         if base64Frame is None:
             return None
@@ -186,6 +186,7 @@ def gen_frames(record_id, base64Frame):
         )
         print("5")
         pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
+        print(pred_bbox)
         imager = utils.draw_bbox(image, pred_bbox)
         result = np.asarray(imager)
         print("6")
@@ -219,37 +220,23 @@ def gen_frames(record_id, base64Frame):
         print("8")
         result = cv2.cvtColor(imager, cv2.COLOR_RGB2BGR)
 
-        # 이미지 저장
-        # if (flag == 0):
-        # cv2.imwrite("C:/Users/user/Desktop/capture/" + now_time + ".png", result)
-
-        # if cv2.waitKey(1) & 0xFF == ord('q'): break
-
         frame_id += 1
 
         print("9")
 
-        # webcam에서 찍고 있는 화면을 web상에서 보여줌.
         ret, buffer = cv2.imencode('.jpeg', result)
 
         print("버퍼")
-        print(buffer[:500])
-
-
+       # print(buffer[:500])
         frame1 = buffer.tobytes()
         # yield (b'--frame\r\n'
         #        b'Content-Type: image/jpeg\r\n\r\n' + frame1 + b'\r\n')
-
         print("10")
         print("프레임")
-        print(frame1[:500])
-
+        #print(frame1[:500])
         #frame1.encode
-
         frame2 = base64.b64encode(frame1)
-
-        print(frame2[:500])
-
+        #print(frame2[:500])
         return frame2
 
     except Exception as ex:
