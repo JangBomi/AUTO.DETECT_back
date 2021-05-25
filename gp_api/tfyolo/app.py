@@ -136,9 +136,14 @@ infer = saved_model_loaded.signatures['serving_default']
 
 def gen_frames(record_id, base64Frame):
     frame_id = 0
+
+    print(base64Frame[:500])
+
     print(record_id)
 
     decoded_data = base64.b64decode(base64Frame)
+
+    print(decoded_data[:500])
 
     print("1")
 
