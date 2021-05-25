@@ -226,19 +226,24 @@ def gen_frames(record_id, base64Frame):
     #return webcam
     #cv2.destroyAllWindows()
 
-
+@api_view(['POST'])
 def video_feed(request):
-    """Video streaming route. Put this in the src attribute of an img tag."""
-    record_id = request.POST.get('id')
-    frame=request.POST.get('data')
+    if request.method == 'POST':
+        print("initiate video feed")
+        record_id_1 = request.data['id']
+        print(record_id_1)
+        record_id = request.POST.get('id')
+        print("video feed: record id")
+        print(record_id)
+        frame=request.POST.get('data')
 
-    print("start video feed")
+        print("start video feed")
 
-    return_value = gen_frames(record_id, frame)
+        return_value = gen_frames(record_id, frame)
 
-    print("end video feed")
+        print("end video feed")
 
-    return StreamingHttpResponse(return_value, content_type='multipart/x-mixed-replace; boundary=frame')
+        return StreamingHttpResponse(return_value, content_type='multipart/x-mixed-replace; boundary=frame')
 
 
 def index(request):
