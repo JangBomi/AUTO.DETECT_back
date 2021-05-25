@@ -233,17 +233,15 @@ def video_feed(request, recordId_id):
         print("get recordId_id")
         print(recordId_id)
         print("initiate video feed")
-        print("video feed: record id")
-        print(record_id)
-        frame=request.POST.get('data')
-
+        frame=request.data['data']
+        print(frame)
         print("start video feed")
 
-        return_value = gen_frames(record_id, frame)
+        return_value = gen_frames(recordId_id, frame)
 
         print("end video feed")
 
-        return StreamingHttpResponse(return_value, content_type='multipart/x-mixed-replace; boundary=frame')
+        return StreamingHttpResponse(return_value, content_type='multipart/form-data')
 
 
 def index(request):
