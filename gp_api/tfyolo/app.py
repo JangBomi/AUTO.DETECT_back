@@ -150,7 +150,6 @@ def gen_frames(record_id, base64Frame):
 
         decoded_data = Image.open(BytesIO(base64.b64decode(strs)))
 
-        print(decoded_data[:500])
 
         print("0")
 
@@ -246,6 +245,12 @@ def gen_frames(record_id, base64Frame):
         print("10")
         print("프레임")
         print(frame1[:500])
+
+        #frame1.encode
+
+        frame2 = "data:image/jpeg;base64," + base64.b64encode(frame1)
+
+        print(frame2[:500])
 
         return frame1
 
