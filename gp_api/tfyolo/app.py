@@ -237,7 +237,7 @@ def gen_frames(record_id, base64Frame):
 
         print("10")
 
-        return buffer
+        return frame1
 
     except Exception as ex:
         print(ex)
