@@ -146,6 +146,10 @@ def gen_frames(record_id, base64Frame):
     decoded_data = base64.b64decode(strs)
     print("0")
 
+    decoded_data = np.array(decoded_data)
+
+    print("0-2")
+
     frame = cv2.cvtColor(decoded_data, cv2.COLOR_BGR2RGB)
     print("0-1")
     image = Image.fromarray(frame)
