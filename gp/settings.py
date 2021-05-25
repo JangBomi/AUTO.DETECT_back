@@ -110,6 +110,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'result')
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
+    'https://jangbomi.github.io'
 ]
 
 # Password validation

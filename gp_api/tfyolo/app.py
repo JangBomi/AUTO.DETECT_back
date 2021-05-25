@@ -199,7 +199,17 @@ def gen_frames(record_id, base64Frame):
             now = timezone.now()
             now_time = time.strftime('%Y' + '-' + '%m' + '-' + '%d' + 'T' + '%H' + '-' + '%M' + '-' + '%S')
             if (i != 0):
+                s3 = boto3.client(
+                    's3',
+                    aws_access_key_id="AKIAVSLMQQUTD56BWFXG",
+                    aws_secret_access_key="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"
+                )
+
+
                 print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
+                file_name = "%s.jpeg" % (now_time)
+                key = "%s/%s.jpeg" % (record_id, now_time)
+
                 file_name = now_time + ".png"
                 record = RecordDetail.objects.create(
                     detectedItem="일회용 컵",
@@ -210,6 +220,7 @@ def gen_frames(record_id, base64Frame):
                 #beep(sound=2)
                 record.save()
                 cv2.imwrite(file_name, result)
+                s3.upload_file(file_name, 'gpbucket-bomi', key)
 
                 print("7")
             else:
