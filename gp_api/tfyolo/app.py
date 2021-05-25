@@ -18,6 +18,7 @@ import cv2
 import base64
 import numpy as np
 from django.utils import timezone
+from rest_framework.decorators import api_view
 
 
 from ..serializers import RecordDetailSerializer
