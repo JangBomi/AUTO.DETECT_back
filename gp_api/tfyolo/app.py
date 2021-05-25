@@ -205,7 +205,7 @@ def gen_frames(record_id, base64Frame):
                     captureTime=now,
                     recordId_id=record_id
                 )
-                beep(sound=2)
+                #beep(sound=2)
                 record.save()
                 cv2.imwrite(file_name, result)
 
