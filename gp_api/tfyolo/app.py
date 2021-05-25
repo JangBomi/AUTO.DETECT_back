@@ -228,8 +228,10 @@ def gen_frames(record_id, base64Frame):
     #cv2.destroyAllWindows()
 
 @api_view(['POST'])
-def video_feed(request):
+def video_feed(request, recordId_id):
     if request.method == 'POST':
+        print("get recordId_id")
+        print(recordId_id)
         print("initiate video feed")
         record_id_1 = request.data['id']
         print(record_id_1)
