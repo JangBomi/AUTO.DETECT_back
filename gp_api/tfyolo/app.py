@@ -140,6 +140,9 @@ def gen_frames(record_id, base64Frame):
 
     print(base64Frame[:500])
 
+    if base64Frame is None:
+        return None
+
     print(record_id)
 
     strs = base64Frame.replace("data:image/jpeg;base64,","")
@@ -227,7 +230,8 @@ def gen_frames(record_id, base64Frame):
     print("9")
 
     # webcam에서 찍고 있는 화면을 web상에서 보여줌.
-    ret, buffer = cv2.imencode('.jpg', result)
+    ret, buffer = cv2.imencode('.jpeg', result)
+
     frame1 = buffer.tobytes()
     yield (b'--frame\r\n'
            b'Content-Type: image/jpeg\r\n\r\n' + frame1 + b'\r\n')
