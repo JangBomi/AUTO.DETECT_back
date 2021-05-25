@@ -144,12 +144,15 @@ def gen_frames(record_id, base64Frame):
     strs = base64Frame.replace("data:image/jpeg;base64,","")
 
     decoded_data = base64.b64decode(strs)
+    print("0")
 
-    print(decoded_data[:500])
+    frame = cv2.cvtColor(decoded_data, cv2.COLOR_BGR2RGB)
+    print("0-1")
+    image = Image.fromarray(frame)
 
     print("1")
 
-    image_data = cv2.resize(decoded_data, (input_size, input_size))
+    image_data = cv2.resize(image, (input_size, input_size))
     image_data = image_data / 255.
     image_data = image_data[np.newaxis, ...].astype(np.float32)
 
