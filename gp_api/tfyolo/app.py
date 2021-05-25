@@ -16,6 +16,7 @@ from tensorflow.python.saved_model import tag_constants
 from PIL import Image
 import cv2
 import base64
+from io import BytesIO
 import numpy as np
 from django.utils import timezone
 from rest_framework.decorators import api_view
@@ -143,7 +144,8 @@ def gen_frames(record_id, base64Frame):
 
     strs = base64Frame.replace("data:image/jpeg;base64,","")
 
-    decoded_data = base64.b64decode(strs)
+    decoded_data = Image.open(BytesIO(base64.b64decode(strs)))
+
     print("0")
 
     decoded_data = np.array(decoded_data)
