@@ -233,9 +233,6 @@ def video_feed(request, recordId_id):
         print("get recordId_id")
         print(recordId_id)
         print("initiate video feed")
-        record_id_1 = request.data['id']
-        print(record_id_1)
-        record_id = request.POST.get('id')
         print("video feed: record id")
         print(record_id)
         frame=request.POST.get('data')
