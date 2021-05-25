@@ -246,7 +246,7 @@ def gen_frames(record_id, base64Frame):
 
         #frame1.encode
 
-        frame2 = "data:image/jpeg;base64," + base64.b64encode(frame1)
+        frame2 = base64.b64encode(frame1)
 
         print(frame2[:500])
 
