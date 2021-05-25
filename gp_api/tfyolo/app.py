@@ -230,8 +230,8 @@ def gen_frames(record_id, base64Frame):
 
         # webcam에서 찍고 있는 화면을 web상에서 보여줌.
         ret, buffer = cv2.imencode('.jpeg', result)
-
-        print(buffer)
+        print("버퍼")
+        print(buffer[:500])
 
 
         frame1 = buffer.tobytes()
@@ -239,8 +239,8 @@ def gen_frames(record_id, base64Frame):
         #        b'Content-Type: image/jpeg\r\n\r\n' + frame1 + b'\r\n')
 
         print("10")
-
-        print(frame1)
+        print("프레임")
+        print(frame1[:500])
 
         return frame1
 
