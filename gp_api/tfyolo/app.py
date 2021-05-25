@@ -196,7 +196,7 @@ def gen_frames(record_id, base64Frame):
         now_time = time.strftime('%Y' + '-' + '%m' + '-' + '%d' + 'T' + '%H' + '-' + '%M' + '-' + '%S')
         if (i != 0):
             print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
-            file_name = "C:/Users/user/Desktop/capture/" + now_time + ".png"
+            file_name = now_time + ".png"
             record = RecordDetail.objects.create(
                 detectedItem="일회용 컵",
                 image=file_name,
