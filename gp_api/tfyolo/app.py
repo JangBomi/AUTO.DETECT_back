@@ -250,7 +250,7 @@ def gen_frames(record_id, base64Frame):
 
         print(frame2[:500])
 
-        return frame1
+        return frame2
 
     except Exception as ex:
         print(ex)
