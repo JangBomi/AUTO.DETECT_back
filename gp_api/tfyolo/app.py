@@ -136,107 +136,111 @@ infer = saved_model_loaded.signatures['serving_default']
 
 
 def gen_frames(record_id, base64Frame):
-    frame_id = 0
+    try:
+        frame_id = 0
 
-    print(base64Frame[:500])
+        print(base64Frame[:500])
 
-    if base64Frame is None:
-        return None
+        if base64Frame is None:
+            return None
 
-    print(record_id)
+        print(record_id)
 
-    strs = base64Frame.replace("data:image/jpeg;base64,","")
+        strs = base64Frame.replace("data:image/jpeg;base64,", "")
 
-    decoded_data = Image.open(BytesIO(base64.b64decode(strs)))
+        decoded_data = Image.open(BytesIO(base64.b64decode(strs)))
 
-    print("0")
+        print("0")
 
-    decoded_data = np.array(decoded_data)
+        decoded_data = np.array(decoded_data)
 
-    print("0-2")
+        print("0-2")
 
-    image = cv2.cvtColor(decoded_data, cv2.COLOR_BGR2RGB)
-    print("0-1")
+        image = cv2.cvtColor(decoded_data, cv2.COLOR_BGR2RGB)
+        print("0-1")
 
-    print("1")
+        print("1")
 
-    image_data = cv2.resize(image, (input_size, input_size))
-    image_data = image_data / 255.
-    image_data = image_data[np.newaxis, ...].astype(np.float32)
+        image_data = cv2.resize(image, (input_size, input_size))
+        image_data = image_data / 255.
+        image_data = image_data[np.newaxis, ...].astype(np.float32)
 
-    print("2")
+        print("2")
 
+        batch_data = tf.constant(image_data)
+        pred_bbox = infer(batch_data)
+        print("3")
+        for key, value in pred_bbox.items():
+            boxes = value[:, :, 0:4]
+            pred_conf = value[:, :, 4:]
+        print("4")
+        boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
+            boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
+            scores=tf.reshape(
+                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
+            max_output_size_per_class=50,
+            max_total_size=50,
+            iou_threshold=iou,
+            score_threshold=score
+        )
+        print("5")
+        pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
+        imager = utils.draw_bbox(image, pred_bbox)
+        result = np.asarray(imager)
+        print("6")
 
+        # 각 물체가 몇%의 확률로 해당 물체라고 판별했는지 해당 물체를 판별한 시각을 출력
+        object_num = -1
+        flag = 0
+        for i in scores.numpy()[0]:
+            object_num += 1
+            now = timezone.now()
+            now_time = time.strftime('%Y' + '-' + '%m' + '-' + '%d' + 'T' + '%H' + '-' + '%M' + '-' + '%S')
+            if (i != 0):
+                print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
+                file_name = now_time + ".png"
+                record = RecordDetail.objects.create(
+                    detectedItem="일회용 컵",
+                    image=file_name,
+                    captureTime=now,
+                    recordId_id=record_id
+                )
+                beep(sound=2)
+                record.save()
+                cv2.imwrite(file_name, result)
 
-    batch_data = tf.constant(image_data)
-    pred_bbox = infer(batch_data)
-    print("3")
-    for key, value in pred_bbox.items():
-        boxes = value[:, :, 0:4]
-        pred_conf = value[:, :, 4:]
-    print("4")
-    boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
-        boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
-        scores=tf.reshape(
-            pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-        max_output_size_per_class=50,
-        max_total_size=50,
-        iou_threshold=iou,
-        score_threshold=score
-    )
-    print("5")
-    pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
-    imager = utils.draw_bbox(image, pred_bbox)
-    result = np.asarray(imager)
-    print("6")
+                print("7")
+            else:
+                if (object_num == 0):
+                    flag = 1
+                break
 
-    # 각 물체가 몇%의 확률로 해당 물체라고 판별했는지 해당 물체를 판별한 시각을 출력
-    object_num = -1
-    flag = 0
-    for i in scores.numpy()[0]:
-        object_num += 1
-        now = timezone.now()
-        now_time = time.strftime('%Y' + '-' + '%m' + '-' + '%d' + 'T' + '%H' + '-' + '%M' + '-' + '%S')
-        if (i != 0):
-            print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
-            file_name = now_time + ".png"
-            record = RecordDetail.objects.create(
-                detectedItem="일회용 컵",
-                image=file_name,
-                captureTime=now,
-                recordId_id=record_id
-            )
-            beep(sound=2)
-            record.save()
-            cv2.imwrite(file_name, result)
+        print("8")
+        result = cv2.cvtColor(imager, cv2.COLOR_RGB2BGR)
 
-            print("7")
-        else:
-            if (object_num == 0):
-                flag = 1
-            break
+        # 이미지 저장
+        # if (flag == 0):
+        # cv2.imwrite("C:/Users/user/Desktop/capture/" + now_time + ".png", result)
 
-    print("8")
-    result = cv2.cvtColor(imager, cv2.COLOR_RGB2BGR)
+        # if cv2.waitKey(1) & 0xFF == ord('q'): break
 
-    # 이미지 저장
-    # if (flag == 0):
-    # cv2.imwrite("C:/Users/user/Desktop/capture/" + now_time + ".png", result)
+        frame_id += 1
 
-    # if cv2.waitKey(1) & 0xFF == ord('q'): break
+        print("9")
 
-    frame_id += 1
+        # webcam에서 찍고 있는 화면을 web상에서 보여줌.
+        ret, buffer = cv2.imencode('.jpeg', result)
 
-    print("9")
+        frame1 = buffer.tobytes()
+        # yield (b'--frame\r\n'
+        #        b'Content-Type: image/jpeg\r\n\r\n' + frame1 + b'\r\n')
 
-    # webcam에서 찍고 있는 화면을 web상에서 보여줌.
-    ret, buffer = cv2.imencode('.jpeg', result)
+        print("10")
 
-    frame1 = buffer.tobytes()
-    yield (b'--frame\r\n'
-           b'Content-Type: image/jpeg\r\n\r\n' + frame1 + b'\r\n')
+        return buffer
 
-    print("10")
+    except Exception as ex:
+        print(ex)
 
 
 # webcam.release()
