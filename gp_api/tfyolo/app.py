@@ -233,6 +233,7 @@ def video_feed(request, recordId_id):
         print("get recordId_id")
         print(recordId_id)
         print("initiate video feed")
+        print(request.data)
         frame=request.data["imageBase64"]
         print(frame)
         print("start video feed")
