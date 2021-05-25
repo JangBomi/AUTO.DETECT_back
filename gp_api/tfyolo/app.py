@@ -231,7 +231,14 @@ def video_feed(request):
     """Video streaming route. Put this in the src attribute of an img tag."""
     record_id = request.POST.get('id')
     frame=request.POST.get('data')
-    return StreamingHttpResponse(gen_frames(record_id, frame), content_type='multipart/x-mixed-replace; boundary=frame')
+
+    print("start video feed")
+
+    return_value = gen_frames(record_id, frame)
+
+    print("end video feed")
+
+    return StreamingHttpResponse(return_value, content_type='multipart/x-mixed-replace; boundary=frame')
 
 
 def index(request):
