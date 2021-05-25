@@ -183,8 +183,8 @@ def gen_frames(record_id, base64Frame):
     )
     print("5")
     pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
-    image = utils.draw_bbox(base64Frame, pred_bbox)
-    result = np.asarray(image)
+    imager = utils.draw_bbox(image, pred_bbox)
+    result = np.asarray(imager)
     print("6")
 
     # 각 물체가 몇%의 확률로 해당 물체라고 판별했는지 해당 물체를 판별한 시각을 출력
@@ -214,7 +214,7 @@ def gen_frames(record_id, base64Frame):
             break
 
     print("8")
-    result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    result = cv2.cvtColor(imager, cv2.COLOR_RGB2BGR)
 
     # 이미지 저장
     # if (flag == 0):
