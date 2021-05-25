@@ -141,7 +141,9 @@ def gen_frames(record_id, base64Frame):
 
     print(record_id)
 
-    decoded_data = base64.b64decode(base64Frame)
+    strs = base64Frame.replace("data:image/jpeg;base64,","")
+
+    decoded_data = base64.b64decode(strs)
 
     print(decoded_data[:500])
 
