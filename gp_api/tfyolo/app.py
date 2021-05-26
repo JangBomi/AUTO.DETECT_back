@@ -17,6 +17,7 @@ from PIL import Image
 import cv2
 import base64
 from io import BytesIO
+import boto3
 import numpy as np
 from django.utils import timezone
 from rest_framework.decorators import api_view
