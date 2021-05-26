@@ -3,6 +3,8 @@ import time
 import beepy
 import tensorflow as tf
 from beepy import beep
+from rest_framework import status
+from rest_framework.response import Response
 from django.http import HttpResponse, FileResponse, StreamingHttpResponse
 from django.shortcuts import render
 
@@ -223,33 +225,34 @@ def gen_frames(record_id, base64Frame):
                 cv2.imwrite(file_name, result)
                 s3.upload_file(file_name, 'gpbucket-bomi', key)
 
-                print("7")
+                return {"point": boxes.numpy()[0][object_num], "percent": scores.numpy()[0][object_num]}
+
             else:
                 if (object_num == 0):
                     flag = 1
                 break
 
         print("8")
-        result = cv2.cvtColor(imager, cv2.COLOR_RGB2BGR)
-
-        frame_id += 1
-
-        print("9")
-
-        ret, buffer = cv2.imencode('.jpeg', result)
-
-        print("버퍼")
-       # print(buffer[:500])
-        frame1 = buffer.tobytes()
-        # yield (b'--frame\r\n'
-        #        b'Content-Type: image/jpeg\r\n\r\n' + frame1 + b'\r\n')
-        print("10")
-        print("프레임")
-        #print(frame1[:500])
-        #frame1.encode
-        frame2 = base64.b64encode(frame1)
+       #  result = cv2.cvtColor(imager, cv2.COLOR_RGB2BGR)
+       #
+       #  frame_id += 1
+       #
+       #  print("9")
+       #
+       #  ret, buffer = cv2.imencode('.jpeg', result)
+       #
+       #  print("버퍼")
+       # # print(buffer[:500])
+       #  frame1 = buffer.tobytes()
+       #  # yield (b'--frame\r\n'
+       #  #        b'Content-Type: image/jpeg\r\n\r\n' + frame1 + b'\r\n')
+       #  print("10")
+       #  print("프레임")
+       #  #print(frame1[:500])
+       #  #frame1.encode
+       #  frame2 = base64.b64encode(frame1)
         #print(frame2[:500])
-        return frame2
+        return {"point": [0,0,0,0], "percent": 0}
 
     except Exception as ex:
         print(ex)
@@ -271,9 +274,10 @@ def video_feed(request, recordId_id):
         frame = request.data["imageBase64"]
         print("start video feed")
         return_value = gen_frames(recordId_id, frame)
+        print(return_value)
         print("end video feed")
 
-        return StreamingHttpResponse(return_value, content_type='multipart/form-data')
+        return Response(return_value, status=status.HTTP_200_OK)
 
 
 def index(request):
