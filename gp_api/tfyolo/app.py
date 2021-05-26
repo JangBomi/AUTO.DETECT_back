@@ -189,7 +189,7 @@ def gen_frames(record_id, base64Frame):
         )
         print("5")
         pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
-        print(pred_bbox)
+        #print(pred_bbox)
         imager = utils.draw_bbox(image, pred_bbox)
         result = np.asarray(imager)
         print("6")
@@ -225,7 +225,12 @@ def gen_frames(record_id, base64Frame):
                 cv2.imwrite(file_name, result)
                 s3.upload_file(file_name, 'gpbucket-bomi', key)
 
-                return {"point": boxes.numpy()[0][object_num], "percent": scores.numpy()[0][object_num]}
+                return {"success": true,
+                        "leftTopX": boxes.numpy()[0][object_num][0],
+                        "leftTopY": boxes.numpy()[0][object_num][1],
+                        "rightBottomX": boxes.numpy()[0][object_num][2],
+                        "rightBottomY": boxes.numpy()[0][object_num][3],
+                        "percent": scores.numpy()[0][object_num] }
 
             else:
                 if (object_num == 0):
@@ -252,7 +257,12 @@ def gen_frames(record_id, base64Frame):
        #  #frame1.encode
        #  frame2 = base64.b64encode(frame1)
         #print(frame2[:500])
-        return {"point": [0,0,0,0], "percent": 0}
+        return {"success": false,
+                "leftTopX": 0,
+                "leftTopY": 0,
+                "rightBottomX": 0,
+                "rightBottomY": 0,
+                "percent": 0 }
 
     except Exception as ex:
         print(ex)
