@@ -225,7 +225,7 @@ def gen_frames(record_id, base64Frame):
                 cv2.imwrite(file_name, result)
                 s3.upload_file(file_name, 'gpbucket-bomi', key)
 
-                return {"success": true,
+                return {"success": 1,
                         "leftTopX": boxes.numpy()[0][object_num][0],
                         "leftTopY": boxes.numpy()[0][object_num][1],
                         "rightBottomX": boxes.numpy()[0][object_num][2],
@@ -257,7 +257,7 @@ def gen_frames(record_id, base64Frame):
        #  #frame1.encode
        #  frame2 = base64.b64encode(frame1)
         #print(frame2[:500])
-        return {"success": false,
+        return {"success": 0,
                 "leftTopX": 0,
                 "leftTopY": 0,
                 "rightBottomX": 0,
