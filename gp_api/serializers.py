@@ -98,8 +98,8 @@ class RecordSerializer(serializers.ModelSerializer):
         return record
 
     def get_all(self, validated_data):
-        #userId = validated_data['userId']
-        queryset = Record.objects.all().order_by('-id')
+        userId = validated_data['userId']
+        queryset = Record.objects.all().filter(userId_id=userId).order_by('-id')
         record = RecordSerializer(queryset, many=True)
 
         return record.data
