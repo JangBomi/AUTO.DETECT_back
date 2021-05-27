@@ -115,13 +115,13 @@ def gen_frames(record_id, base64Frame):
 
 
                 print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
-                file_name = "https://gpbucket-bomi.s3.ap-northeast-2.amazonaws.com/%s/%s.jpeg" % (record_id, now_time)
+                file_name = "%s.jpeg" % (now_time)
+                #save_name = "https://gpbucket-bomi.s3.ap-northeast-2.amazonaws.com/%s/%s.jpeg" % (record_id, now_time)
                 key = "%s/%s.jpeg" % (record_id, now_time)
 
-                # file_name = now_time + ".png"
                 record = RecordDetail.objects.create(
                     detectedItem="일회용 컵",
-                    image=file_name,
+                    image="https://gpbucket-bomi.s3.ap-northeast-2.amazonaws.com/"+key,
                     captureTime=now,
                     recordId_id=record_id
                 )
