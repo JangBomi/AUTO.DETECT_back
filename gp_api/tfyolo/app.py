@@ -80,7 +80,7 @@ def gen_frames(record_id, base64Frame):
             score_threshold=score
         )
         print("5")
-        pred_bbox = [boxes.numpy(), "take-out-cup", classes.numpy(), valid_detections.numpy()]
+        pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
         #print(pred_bbox)
         imager = utils.draw_bbox(image, pred_bbox)
         result = np.asarray(imager)
