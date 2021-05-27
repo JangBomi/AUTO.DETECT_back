@@ -43,101 +43,6 @@ saved_model_loaded = tf.saved_model.load(weights, tags=[tag_constants.SERVING])
 infer = saved_model_loaded.signatures['serving_default']
 
 
-# def gen_frames(record_id):
-#     try:
-#         frame_id = 0
-#         print(record_id)
-#
-#         # record_id = Record.objects.raw("SELECT max(id) FROM gp_api_record")
-#         #record_id = 1
-#
-#
-#         while True:
-#             return_value, frame = webcam.read()
-#             if return_value:
-#                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-#                 image = Image.fromarray(frame)
-#             else:
-#                 if frame_id == webcam.get(cv2.CAP_PROP_FRAME_COUNT):
-#                     print("Video processing complete")
-#                     exit()
-#                     break
-#                 raise ValueError("No image! Try with another video format")
-#
-#             frame_size = frame.shape[:2]
-#             image_data = cv2.resize(frame, (input_size, input_size))
-#             image_data = image_data / 255.
-#             image_data = image_data[np.newaxis, ...].astype(np.float32)
-#
-#             batch_data = tf.constant(image_data)
-#             pred_bbox = infer(batch_data)
-#             for key, value in pred_bbox.items():
-#                 boxes = value[:, :, 0:4]
-#                 pred_conf = value[:, :, 4:]
-#
-#             boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
-#             boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
-#                 scores=tf.reshape(
-#                     pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-#                 max_output_size_per_class=50,
-#                 max_total_size=50,
-#                 iou_threshold=iou,
-#                 score_threshold=score
-#             )
-#             pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
-#             image = utils.draw_bbox(frame, pred_bbox)
-#             result = np.asarray(image)
-#
-#             # 각 물체가 몇%의 확률로 해당 물체라고 판별했는지 해당 물체를 판별한 시각을 출력
-#             object_num = -1
-#             flag = 0
-#             for i in scores.numpy()[0]:
-#                 object_num += 1
-#                 now = timezone.now()
-#                 now_time = time.strftime('%Y' + '-' + '%m' + '-' + '%d' + 'T' + '%H' + '-' + '%M' + '-' + '%S')
-#                 if (i != 0):
-#                     print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
-#                     file_name = "C:/Users/user/Desktop/capture/" + now_time + ".png"
-#                     record = RecordDetail.objects.create(
-#                         detectedItem="일회용 컵",
-#                         image=file_name,
-#                         captureTime=now,
-#                         recordId_id=record_id
-#                     )
-#                     beep(sound=2)
-#                     record.save()
-#                     cv2.imwrite(file_name, result)
-#                 else:
-#                     if (object_num == 0):
-#                         flag = 1
-#                     break
-#
-#             result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-#
-#             # 이미지 저장
-#             # if (flag == 0):
-#             # cv2.imwrite("C:/Users/user/Desktop/capture/" + now_time + ".png", result)
-#
-#             if cv2.waitKey(1) & 0xFF == ord('q'): break
-#
-#             frame_id += 1
-#
-#             # webcam에서 찍고 있는 화면을 web상에서 보여줌.
-#             ret, buffer = cv2.imencode('.jpg', result)
-#             frame1 = buffer.tobytes()
-#             yield (b'--frame\r\n'
-#                    b'Content-Type: image/jpeg\r\n\r\n' + frame1 + b'\r\n')
-#
-#     except Exception as ex:
-#         print(ex)
-#         webcam.release()
-#         cv2.destroyAllWindows()
-#
-#     webcam.release()
-#     return webcam
-#     cv2.destroyAllWindows()
-
-
 def gen_frames(record_id, base64Frame):
     try:
         frame_id = 0
@@ -210,10 +115,10 @@ def gen_frames(record_id, base64Frame):
 
 
                 print(object_num, '번째 물체의 확률:', scores.numpy()[0][object_num], '시각:', now_time)
-                file_name = "%s.jpeg" % (now_time)
+                file_name = "https://gpbucket-bomi.s3.ap-northeast-2.amazonaws.com/%s/%s.jpeg" % (record_id, now_time)
                 key = "%s/%s.jpeg" % (record_id, now_time)
 
-                file_name = now_time + ".png"
+                # file_name = now_time + ".png"
                 record = RecordDetail.objects.create(
                     detectedItem="일회용 컵",
                     image=file_name,
