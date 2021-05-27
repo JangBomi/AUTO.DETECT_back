@@ -126,10 +126,7 @@ def record(request):
 def recordAll(request, userId_id):
     if request.method == 'GET':
         serializer = RecordSerializer()
-        print("start")
         data = serializer.get_all(userId_id)
-        print(data)
-        print("end")
 
         response = {
             'success': True,
