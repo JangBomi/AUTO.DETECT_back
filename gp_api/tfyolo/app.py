@@ -33,7 +33,7 @@ size = 256  # resize images to
 tiny = False  # yolo-tiny인 경우 True 아니라면 False
 model = 'yolov4'  # yolov3 or yolov4
 iou = 0.45  # iou threshold
-score = 0.25  # score threshold
+score = 0.5  # score threshold
 
 input_size = 416
 ## webcam = cv2.VideoCapture(0)  # webcam 사용
