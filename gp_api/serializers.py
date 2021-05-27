@@ -99,6 +99,7 @@ class RecordSerializer(serializers.ModelSerializer):
 
     def get_all(self, request):
         #userId = validated_data['userId']
+        print(request)
         print(request.GET)
         userId = request.GET['userId']
         queryset = Record.objects.all().filter(userId_id=userId).order_by('-id')
