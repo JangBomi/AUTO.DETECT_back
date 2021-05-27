@@ -90,6 +90,10 @@ def login(request):
 def record(request):
     if request.method == 'GET':
         serializer = RecordSerializer()
+        print("1")
+        print(request)
+        print("2")
+        print(request.data)
 
         data = serializer.get_all(request.data)
 
