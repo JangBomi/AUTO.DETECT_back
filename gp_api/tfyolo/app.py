@@ -33,7 +33,7 @@ size = 256  # resize images to
 tiny = False  # yolo-tiny인 경우 True 아니라면 False
 model = 'yolov4'  # yolov3 or yolov4
 iou = 0.45  # iou threshold
-score = 0.5  # score threshold
+score = 0.55  # score threshold
 
 input_size = 416
 ## webcam = cv2.VideoCapture(0)  # webcam 사용
@@ -45,9 +45,6 @@ infer = saved_model_loaded.signatures['serving_default']
 
 def gen_frames(record_id, base64Frame):
     try:
-        frame_id = 0
-
-        #print(base64Frame[:500])
 
         if base64Frame is None:
             return None
@@ -58,31 +55,21 @@ def gen_frames(record_id, base64Frame):
 
         decoded_data = Image.open(BytesIO(base64.b64decode(strs)))
 
-
-        print("0")
-
         decoded_data = np.array(decoded_data)
 
-        print("0-2")
-
         image = cv2.cvtColor(decoded_data, cv2.COLOR_BGR2RGB)
-        print("0-1")
 
-        print("1")
 
         image_data = cv2.resize(image, (input_size, input_size))
         image_data = image_data / 255.
         image_data = image_data[np.newaxis, ...].astype(np.float32)
 
-        print("2")
 
         batch_data = tf.constant(image_data)
         pred_bbox = infer(batch_data)
-        print("3")
         for key, value in pred_bbox.items():
             boxes = value[:, :, 0:4]
             pred_conf = value[:, :, 4:]
-        print("4")
         boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
             boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
             scores=tf.reshape(
@@ -93,7 +80,7 @@ def gen_frames(record_id, base64Frame):
             score_threshold=score
         )
         print("5")
-        pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
+        pred_bbox = [boxes.numpy(), "take-out-cup", classes.numpy(), valid_detections.numpy()]
         #print(pred_bbox)
         imager = utils.draw_bbox(image, pred_bbox)
         result = np.asarray(imager)
