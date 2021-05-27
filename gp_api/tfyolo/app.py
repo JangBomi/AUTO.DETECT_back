@@ -131,10 +131,10 @@ def gen_frames(record_id, base64Frame):
                 s3.upload_file(file_name, 'gpbucket-bomi', key)
 
                 return {"success": 1,
-                        "leftTopX": boxes.numpy()[0][object_num][0],
-                        "leftTopY": boxes.numpy()[0][object_num][1],
-                        "rightBottomX": boxes.numpy()[0][object_num][2],
-                        "rightBottomY": boxes.numpy()[0][object_num][3],
+                        "leftTopX": boxes.numpy()[0][object_num][1],
+                        "leftTopY": boxes.numpy()[0][object_num][0],
+                        "rightBottomX": boxes.numpy()[0][object_num][3],
+                        "rightBottomY": boxes.numpy()[0][object_num][2],
                         "percent": scores.numpy()[0][object_num] }
 
             else:
