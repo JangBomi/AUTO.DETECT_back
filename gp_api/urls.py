@@ -24,6 +24,7 @@ urlpatterns = [
     path('signup', views.createUser),
     path('signin', views.login),
     path('home/record', views.record),
+    path('home/record/<int:userId_id>', views.recordAll),
     path('home/record/<int:recordId_id>', views.recordOne),
     path('home/record/detail/<int:recordId_id>', views.recordDetail),
     path('cam', app.index),

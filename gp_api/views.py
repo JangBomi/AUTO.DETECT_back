@@ -90,12 +90,8 @@ def login(request):
 def record(request):
     if request.method == 'GET':
         serializer = RecordSerializer()
-        print("1")
-        print(request)
-        print("2")
-        print(request.data)
 
-        data = serializer.get_all(request.data)
+        data = serializer.get_all()
 
         response = {
             'success': True,
@@ -122,6 +118,30 @@ def record(request):
         }
 
         return Response(response, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+@authentication_classes((JSONWebTokenAuthentication, ))
+def recordAll(request, userId_id):
+    if request.method == 'GET':
+        serializer = RecordSerializer()
+        print("start")
+        data = serializer.get_all(userId_id)
+        print(data)
+        print("end")
+
+        response = {
+            'success': True,
+            'message': "successfully get record",
+            'data': data
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+
+
+
 
 @api_view(['PATCH', 'DELETE'])
 @permission_classes((IsAuthenticated, ))
