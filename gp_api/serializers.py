@@ -157,7 +157,7 @@ class RecordDetailSerializer(serializers.ModelSerializer):
         )
 
     detectedItem = serializers.CharField()
-    image = serializers.ImageField()
+    image = serializers.CharField()
     captureTime = serializers.DateTimeField()
     recordId_id = serializers.IntegerField()
 
